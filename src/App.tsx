@@ -19,7 +19,7 @@ const COLUMNS: { status: ChoreStatus; label: string }[] = [
 
 export default function App() {
   const { chores, employees } = useStore()
-  const [tab, setTab] = useState<Tab>('board')
+  const [tab, setTab] = useState<Tab>('calendar')
   const [filter, setFilter] = useState<Filter>('all')
   const [search, setSearch] = useState('')
   const [editingChore, setEditingChore] = useState<Chore | null | undefined>(undefined)

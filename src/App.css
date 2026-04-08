@@ -378,6 +378,11 @@
   text-transform: uppercase; letter-spacing: 0.6px;
   color: var(--text-muted); padding: 5px 0;
 }
+.cal__weekday:first-child,
+.cal__weekday:last-child {
+  color: var(--danger);
+  opacity: 0.7;
+}
 
 .cal__day {
   min-height: 100px; padding: 6px 5px 4px;
@@ -389,6 +394,8 @@
 }
 .cal__day:hover { background: var(--surface-2); border-color: var(--accent); }
 .cal__day--outside { opacity: 0.3; }
+.cal__day--weekend { background: var(--weekend-bg); }
+.cal__day--weekend:hover { background: var(--surface-2); }
 .cal__day--today .cal__day-num {
   background: var(--accent); color: #fff; border-radius: 50%;
   width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
@@ -505,6 +512,9 @@
 
 .week-col--today .week-col__header { background: var(--accent-bg); }
 .week-col--selected { outline: 2px solid var(--accent); outline-offset: -2px; }
+.week-col--weekend { background: var(--weekend-bg); }
+.week-col--weekend .week-col__header { background: var(--weekend-header-bg); }
+.week-col--weekend .week-col__dow { color: var(--danger); opacity: 0.8; }
 
 .week-col__events {
   flex: 1; overflow-y: auto; padding: 8px 6px;

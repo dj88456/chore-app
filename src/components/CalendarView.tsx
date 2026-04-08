@@ -25,6 +25,7 @@ const STATUS_LABEL: Record<Chore['status'], string> = {
 
 interface Props {
   onEditChore: (chore: Chore) => void
+  onNewChore: (dueDate?: string) => void
 }
 
 // ── Shared event chip ────────────────────────────────────────
@@ -78,7 +79,7 @@ function ChoreDetail({ chore, assignee, onEdit }: {
 }
 
 // ── Main component ───────────────────────────────────────────
-export function CalendarView({ onEditChore }: Props) {
+export function CalendarView({ onEditChore, onNewChore }: Props) {
   const { chores, employees } = useStore()
   const [view, setView] = useState<CalView>('month')
   const [current, setCurrent] = useState(new Date())
@@ -163,7 +164,12 @@ export function CalendarView({ onEditChore }: Props) {
             <>
               <div className="cal-panel__header">
                 <h3>{format(selected, 'EEEE, MMMM d')}</h3>
-                <span className="cal-panel__count">{selectedChores.length} chore{selectedChores.length !== 1 ? 's' : ''}</span>
+                <button
+                  className="btn btn--primary btn--sm"
+                  onClick={() => onNewChore(format(selected, 'yyyy-MM-dd'))}
+                >
+                  + Add
+                </button>
               </div>
               {selectedChores.length === 0
                 ? <p className="empty-hint">No chores due this day.</p>
@@ -293,6 +299,9 @@ export function CalendarView({ onEditChore }: Props) {
         </div>
 
         <div className="cal-topbar__right">
+          <button className="btn btn--primary btn--sm" onClick={() => onNewChore()}>
+            + New Chore
+          </button>
           {/* View switcher */}
           <div className="view-switcher">
             {(['month', 'week', 'day'] as CalView[]).map((v) => (

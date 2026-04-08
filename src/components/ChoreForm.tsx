@@ -4,12 +4,13 @@ import { useStore } from '../store'
 
 interface Props {
   chore?: Chore | null
+  defaultDueDate?: string
   onClose: () => void
 }
 
 const today = () => new Date().toISOString().split('T')[0]
 
-export function ChoreForm({ chore, onClose }: Props) {
+export function ChoreForm({ chore, defaultDueDate, onClose }: Props) {
   const { employees, addChore, updateChore } = useStore()
   const overlayRef = useRef<HTMLDivElement>(null)
 
@@ -18,7 +19,7 @@ export function ChoreForm({ chore, onClose }: Props) {
   const [assigneeId, setAssigneeId] = useState(chore?.assigneeId ?? '')
   const [priority, setPriority] = useState<ChorePriority>(chore?.priority ?? 'medium')
   const [frequency, setFrequency] = useState<ChoreFrequency>(chore?.frequency ?? 'weekly')
-  const [dueDate, setDueDate] = useState(chore?.dueDate ?? today())
+  const [dueDate, setDueDate] = useState(chore?.dueDate ?? defaultDueDate ?? today())
   const [status, setStatus] = useState<ChoreStatus>(chore?.status ?? 'pending')
 
   // Close on Escape

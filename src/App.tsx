@@ -23,7 +23,13 @@ export default function App() {
   const [filter, setFilter] = useState<Filter>('all')
   const [search, setSearch] = useState('')
   const [editingChore, setEditingChore] = useState<Chore | null | undefined>(undefined)
+  const [newChoreDueDate, setNewChoreDueDate] = useState<string | undefined>(undefined)
   // undefined = closed, null = new, Chore = editing
+
+  const openNewChore = (dueDate?: string) => {
+    setNewChoreDueDate(dueDate)
+    setEditingChore(null)
+  }
 
   const filtered = chores.filter((c) => {
     if (filter !== 'all' && c.status !== filter) return false
@@ -149,7 +155,7 @@ export default function App() {
             })}
           </div>
         ) : tab === 'calendar' ? (
-          <CalendarView onEditChore={setEditingChore} />
+          <CalendarView onEditChore={setEditingChore} onNewChore={openNewChore} />
         ) : (
           <EmployeeManager />
         )}
@@ -159,7 +165,8 @@ export default function App() {
       {editingChore !== undefined && (
         <ChoreForm
           chore={editingChore}
-          onClose={() => setEditingChore(undefined)}
+          defaultDueDate={newChoreDueDate}
+          onClose={() => { setEditingChore(undefined); setNewChoreDueDate(undefined) }}
         />
       )}
     </div>

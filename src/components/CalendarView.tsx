@@ -296,12 +296,12 @@ export function CalendarView({ onEditChore, onNewChore }: Props) {
           >
             Today
           </button>
-        </div>
-
-        <div className="cal-topbar__right">
           <button className="btn btn--primary btn--sm" onClick={() => onNewChore()}>
             + New Chore
           </button>
+        </div>
+
+        <div className="cal-topbar__right">
           {/* View switcher */}
           <div className="view-switcher">
             {(['month', 'week', 'day'] as CalView[]).map((v) => (

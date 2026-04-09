@@ -422,11 +422,15 @@
   color: var(--text);
   transition: background 0.1s, color 0.1s;
 }
-.month-picker__cell:hover { background: var(--surface-2); }
+.month-picker__cell:hover { background: var(--surface-2); color: var(--text-heading); }
 .month-picker__cell--active {
   background: var(--accent);
   color: #fff;
   font-weight: 700;
+}
+.month-picker__cell--active:hover {
+  background: var(--accent-hover);
+  color: #fff;
 }
 
 .view-switcher {

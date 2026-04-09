@@ -372,8 +372,6 @@
 .cal-nav-arrow { font-size: 20px; width: 32px; height: 32px; }
 .cal__month { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
 
-.month-picker-wrap { position: relative; }
-
 .cal__month-btn {
   display: flex; align-items: center; gap: 6px;
   font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
@@ -385,10 +383,7 @@
 .cal__month-caret { font-size: 10px; color: var(--text-muted); }
 
 .month-picker {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 50;
+  z-index: 9999;
   background: var(--surface);
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
@@ -405,6 +400,14 @@
   margin-bottom: 10px;
 }
 .month-picker__year { font-size: 15px; font-weight: 700; }
+.month-picker__year--btn {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 700; color: var(--text-heading);
+  transition: background 0.1s;
+}
+.month-picker__year--btn:hover { background: var(--surface-2); }
+.month-picker__grid--years .month-picker__cell { font-size: 12px; }
 
 .month-picker__grid {
   display: grid;

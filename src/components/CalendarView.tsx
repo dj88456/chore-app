@@ -88,18 +88,32 @@ export function CalendarView({ onEditChore, onNewChore }: Props) {
   const [current, setCurrent] = useState(new Date())
   const [selected, setSelected] = useState<Date | null>(null)
   const [showPicker, setShowPicker] = useState(false)
+  const [pickerMode, setPickerMode] = useState<'month' | 'year'>('month')
   const [pickerYear, setPickerYear] = useState(current.getFullYear())
+  const [pickerPos, setPickerPos] = useState({ top: 0, left: 0 })
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const pickerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!showPicker) return
     const handler = (e: MouseEvent) => {
-      if (pickerRef.current && !pickerRef.current.contains(e.target as Node))
-        setShowPicker(false)
+      if (
+        pickerRef.current && !pickerRef.current.contains(e.target as Node) &&
+        triggerRef.current && !triggerRef.current.contains(e.target as Node)
+      ) setShowPicker(false)
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [showPicker])
+
+  const openPicker = () => {
+    if (showPicker) { setShowPicker(false); return }
+    const rect = triggerRef.current?.getBoundingClientRect()
+    if (rect) setPickerPos({ top: rect.bottom + 6, left: rect.left })
+    setPickerYear(current.getFullYear())
+    setPickerMode('month')
+    setShowPicker(true)
+  }
 
   const choresOnDay = (day: Date) =>
     chores.filter((c) => isSameDay(parseISO(c.dueDate), day))
@@ -306,45 +320,70 @@ export function CalendarView({ onEditChore, onNewChore }: Props) {
           <button className="icon-btn cal-nav-arrow" onClick={goBack}>‹</button>
 
           {/* Clickable month/year label → picker dropdown */}
-          <div className="month-picker-wrap" ref={pickerRef}>
-            <button
-              className="cal__month-btn"
-              onClick={() => {
-                setPickerYear(current.getFullYear())
-                setShowPicker(v => !v)
-              }}
-            >
-              {navLabel()} <span className="cal__month-caret">{showPicker ? '▲' : '▼'}</span>
-            </button>
+          <button ref={triggerRef} className="cal__month-btn" onClick={openPicker}>
+            {navLabel()} <span className="cal__month-caret">{showPicker ? '▲' : '▼'}</span>
+          </button>
 
-            {showPicker && (
-              <div className="month-picker">
-                <div className="month-picker__year-nav">
-                  <button className="icon-btn" onClick={() => setPickerYear(y => y - 1)}>‹</button>
-                  <span className="month-picker__year">{pickerYear}</span>
-                  <button className="icon-btn" onClick={() => setPickerYear(y => y + 1)}>›</button>
-                </div>
-                <div className="month-picker__grid">
-                  {MONTHS.map((label, idx) => {
-                    const isActive =
-                      idx === current.getMonth() && pickerYear === current.getFullYear()
-                    return (
+          {showPicker && (
+            <div
+              ref={pickerRef}
+              className="month-picker"
+              style={{ position: 'fixed', top: pickerPos.top, left: pickerPos.left }}
+            >
+              {pickerMode === 'month' ? (
+                <>
+                  <div className="month-picker__year-nav">
+                    <button className="icon-btn" onClick={() => setPickerYear(y => y - 1)}>‹</button>
+                    <button
+                      className="month-picker__year month-picker__year--btn"
+                      onClick={() => setPickerMode('year')}
+                    >
+                      {pickerYear} <span className="cal__month-caret">▼</span>
+                    </button>
+                    <button className="icon-btn" onClick={() => setPickerYear(y => y + 1)}>›</button>
+                  </div>
+                  <div className="month-picker__grid">
+                    {MONTHS.map((label, idx) => {
+                      const isActive = idx === current.getMonth() && pickerYear === current.getFullYear()
+                      return (
+                        <button
+                          key={label}
+                          className={clsx('month-picker__cell', { 'month-picker__cell--active': isActive })}
+                          onClick={() => {
+                            setCurrent(setYear(setMonth(current, idx), pickerYear))
+                            setShowPicker(false)
+                          }}
+                        >
+                          {label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="month-picker__year-nav">
+                    <button className="icon-btn" onClick={() => setPickerYear(y => y - 12)}>‹</button>
+                    <span className="month-picker__year">{pickerYear - 6} – {pickerYear + 5}</span>
+                    <button className="icon-btn" onClick={() => setPickerYear(y => y + 12)}>›</button>
+                  </div>
+                  <div className="month-picker__grid month-picker__grid--years">
+                    {Array.from({ length: 12 }, (_, i) => pickerYear - 6 + i).map(yr => (
                       <button
-                        key={label}
-                        className={clsx('month-picker__cell', { 'month-picker__cell--active': isActive })}
-                        onClick={() => {
-                          setCurrent(setYear(setMonth(current, idx), pickerYear))
-                          setShowPicker(false)
-                        }}
+                        key={yr}
+                        className={clsx('month-picker__cell', {
+                          'month-picker__cell--active': yr === current.getFullYear(),
+                        })}
+                        onClick={() => { setPickerYear(yr); setPickerMode('month') }}
                       >
-                        {label}
+                        {yr}
                       </button>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
 
           <button className="icon-btn cal-nav-arrow" onClick={goForward}>›</button>
           <button

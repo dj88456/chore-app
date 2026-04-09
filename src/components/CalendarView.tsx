@@ -7,7 +7,6 @@ import {
   addMonths, subMonths,
   addWeeks, subWeeks,
   addDays, subDays,
-  addYears, subYears,
   format, parseISO, setMonth, setYear,
 } from 'date-fns'
 import { clsx } from 'clsx'
@@ -321,7 +320,7 @@ export function CalendarView({ onEditChore, onNewChore }: Props) {
           <button className="icon-btn cal-nav-arrow" onClick={goBack}>‹</button>
 
           {/* Clickable month/year label → picker dropdown */}
-          <button ref={triggerRef} className="cal__month-btn" onClick={openPicker}>
+          <button ref={triggerRef} className={clsx('cal__month-btn', `cal__month-btn--${view}`)} onClick={openPicker}>
             {navLabel()} <span className="cal__month-caret">{showPicker ? '▲' : '▼'}</span>
           </button>
 

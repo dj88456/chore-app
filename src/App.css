@@ -378,9 +378,12 @@
   color: var(--text-heading);
   padding: 4px 8px; border-radius: var(--radius-sm);
   transition: background 0.12s;
-  min-width: 180px;
+  min-width: 180px; /* overridden per-view below */
 }
 .cal__month-btn:hover { background: var(--surface-2); }
+.cal__month-btn--month { min-width: 180px; }
+.cal__month-btn--week  { min-width: 230px; }
+.cal__month-btn--day   { min-width: 280px; }
 .cal__month-caret { font-size: 10px; color: var(--text-muted); }
 
 .month-picker {

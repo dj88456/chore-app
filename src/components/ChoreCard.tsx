@@ -10,10 +10,6 @@ interface Props {
   onEdit: (chore: Chore) => void
 }
 
-const PRIORITY_LABEL: Record<Chore['priority'], string> = {
-  low: 'Low', medium: 'Med', high: 'High',
-}
-
 const STATUS_NEXT: Record<Chore['status'], Chore['status']> = {
   pending: 'in-progress',
   'in-progress': 'done',
@@ -21,9 +17,9 @@ const STATUS_NEXT: Record<Chore['status'], Chore['status']> = {
 }
 
 const STATUS_LABEL: Record<Chore['status'], string> = {
-  pending: 'To Do',
-  'in-progress': 'In Progress',
-  done: 'Done',
+  pending: 'Mark In Progress →',
+  'in-progress': 'Mark Done →',
+  done: 'Reopen',
 }
 
 export function ChoreCard({ chore, employees, onEdit }: Props) {
@@ -43,98 +39,80 @@ export function ChoreCard({ chore, employees, onEdit }: Props) {
         'chore-card--today': dueToday && chore.status !== 'done',
       })}
     >
+      {/* Row 1: badges + hover actions */}
       <div className="chore-card__header">
-        <span
-          className={clsx('priority-badge', `priority-badge--${chore.priority}`)}
-        >
-          {PRIORITY_LABEL[chore.priority]}
-        </span>
-        <span className="freq-badge">{chore.frequency}</span>
+        <div className="chore-card__badges">
+          <span className={clsx('priority-badge', `priority-badge--${chore.priority}`)}>
+            {chore.priority}
+          </span>
+          <span className="freq-badge">{chore.frequency}</span>
+        </div>
         <div className="chore-card__actions">
-          <button
-            className="icon-btn"
-            title="Edit"
-            onClick={() => onEdit(chore)}
-          >
+          <button className="icon-btn" title="Edit" onClick={() => onEdit(chore)}>
             ✏️
           </button>
-          {confirmDelete ? (
-            <>
-              <button
-                className="icon-btn icon-btn--danger"
-                onClick={() => deleteChore(chore.id)}
-              >
-                Confirm
-              </button>
-              <button
-                className="icon-btn"
-                onClick={() => setConfirmDelete(false)}
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <button
-              className="icon-btn"
-              title="Delete"
-              onClick={() => setConfirmDelete(true)}
-            >
-              🗑️
-            </button>
-          )}
+          <button className="icon-btn" title="Delete" onClick={() => setConfirmDelete(true)}>
+            🗑️
+          </button>
         </div>
       </div>
 
+      {/* Row 2: title + description */}
       <h3 className="chore-card__title">{chore.title}</h3>
       {chore.description && (
         <p className="chore-card__desc">{chore.description}</p>
       )}
 
-      <div className="chore-card__footer">
-        <div className="chore-card__meta">
-          <span
-            className={clsx('due-label', {
-              'due-label--overdue': overdue,
-              'due-label--today': dueToday,
-            })}
-          >
-            {overdue ? '⚠️ ' : dueToday ? '📅 ' : ''}
-            {format(due, 'MMM d')}
-          </span>
+      {/* Row 3: due date + assignee */}
+      <div className="chore-card__meta">
+        <span className={clsx('due-label', {
+          'due-label--overdue': overdue,
+          'due-label--today': dueToday,
+        })}>
+          {overdue ? '⚠️' : '📅'} {format(due, 'MMM d')}
+        </span>
 
+        <div className="chore-card__assignee">
+          {assignee && (
+            <span className="assignee-dot assignee-dot--sm"
+              style={{ background: assignee.color }}>
+              {assignee.name[0]}
+            </span>
+          )}
           <select
             className="assignee-select"
             value={chore.assigneeId ?? ''}
-            onChange={(e) =>
-              assignChore(chore.id, e.target.value || null)
-            }
+            onChange={(e) => assignChore(chore.id, e.target.value || null)}
           >
             <option value="">Unassigned</option>
             {employees.map((emp) => (
-              <option key={emp.id} value={emp.id}>
-                {emp.name}
-              </option>
+              <option key={emp.id} value={emp.id}>{emp.name}</option>
             ))}
           </select>
         </div>
-
-        {assignee && (
-          <span
-            className="assignee-dot"
-            title={assignee.name}
-            style={{ background: assignee.color }}
-          >
-            {assignee.name[0]}
-          </span>
-        )}
       </div>
 
-      <button
-        className={clsx('status-btn', `status-btn--${chore.status}`)}
-        onClick={() => setStatus(chore.id, STATUS_NEXT[chore.status])}
-      >
-        {STATUS_LABEL[chore.status]}
-      </button>
+      {/* Row 4: status button OR delete confirmation */}
+      {confirmDelete ? (
+        <div className="chore-card__confirm">
+          <span>Delete this chore?</span>
+          <div className="chore-card__confirm-actions">
+            <button className="btn btn--ghost btn--sm" onClick={() => setConfirmDelete(false)}>
+              Cancel
+            </button>
+            <button className="btn btn--danger btn--sm" onClick={() => deleteChore(chore.id)}>
+              Delete
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          className={clsx('status-btn', `status-btn--${chore.status}`)}
+          onClick={() => setStatus(chore.id, STATUS_NEXT[chore.status])}
+        >
+          {STATUS_LABEL[chore.status]}
+        </button>
+      )}
     </div>
   )
 }

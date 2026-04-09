@@ -154,9 +154,16 @@
 .chore-card--today  { border-left: 3px solid var(--warning); }
 
 .chore-card__header {
-  display: flex; align-items: center; gap: 5px; margin-bottom: 9px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
 }
-.chore-card__actions { margin-left: auto; display: flex; gap: 2px; }
+.chore-card__badges { display: flex; align-items: center; gap: 5px; }
+.chore-card__actions {
+  display: flex; gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.chore-card:hover .chore-card__actions { opacity: 1; }
 
 .priority-badge, .freq-badge {
   font-size: 11px; font-weight: 700;
@@ -177,11 +184,11 @@
   font-size: 13px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.55;
 }
 
-.chore-card__footer {
+.chore-card__meta {
   display: flex; align-items: center; justify-content: space-between;
   gap: 8px; margin-bottom: 10px;
 }
-.chore-card__meta { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.chore-card__assignee { display: flex; align-items: center; gap: 6px; }
 
 .due-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; font-weight: 500; }
 .due-label--overdue { color: var(--danger); font-weight: 700; }
@@ -189,8 +196,24 @@
 
 .assignee-select {
   font-size: 12px; padding: 3px 6px;
-  width: auto; min-width: 80px; max-width: 120px;
+  width: auto; min-width: 90px; max-width: 130px;
 }
+
+.chore-card__confirm {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--danger-bg);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--danger);
+}
+.chore-card__confirm-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+.btn--danger {
+  background: var(--danger); color: #fff;
+}
+.btn--danger:hover { background: #b91c1c; }
 
 .assignee-dot {
   width: 28px; height: 28px; border-radius: 50%;

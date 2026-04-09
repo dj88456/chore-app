@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   startOfMonth, endOfMonth,
   startOfWeek, endOfWeek,
@@ -6,7 +6,8 @@ import {
   addMonths, subMonths,
   addWeeks, subWeeks,
   addDays, subDays,
-  format, parseISO,
+  addYears, subYears,
+  format, parseISO, setMonth, setYear,
 } from 'date-fns'
 import { clsx } from 'clsx'
 import { useStore } from '../store'
@@ -79,11 +80,26 @@ function ChoreDetail({ chore, assignee, onEdit }: {
 }
 
 // ── Main component ───────────────────────────────────────────
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+
 export function CalendarView({ onEditChore, onNewChore }: Props) {
   const { chores, employees } = useStore()
   const [view, setView] = useState<CalView>('month')
   const [current, setCurrent] = useState(new Date())
   const [selected, setSelected] = useState<Date | null>(null)
+  const [showPicker, setShowPicker] = useState(false)
+  const [pickerYear, setPickerYear] = useState(current.getFullYear())
+  const pickerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!showPicker) return
+    const handler = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node))
+        setShowPicker(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showPicker])
 
   const choresOnDay = (day: Date) =>
     chores.filter((c) => isSameDay(parseISO(c.dueDate), day))
@@ -288,7 +304,48 @@ export function CalendarView({ onEditChore, onNewChore }: Props) {
       <div className="cal-topbar">
         <div className="cal-topbar__left">
           <button className="icon-btn cal-nav-arrow" onClick={goBack}>‹</button>
-          <h2 className="cal__month">{navLabel()}</h2>
+
+          {/* Clickable month/year label → picker dropdown */}
+          <div className="month-picker-wrap" ref={pickerRef}>
+            <button
+              className="cal__month-btn"
+              onClick={() => {
+                setPickerYear(current.getFullYear())
+                setShowPicker(v => !v)
+              }}
+            >
+              {navLabel()} <span className="cal__month-caret">{showPicker ? '▲' : '▼'}</span>
+            </button>
+
+            {showPicker && (
+              <div className="month-picker">
+                <div className="month-picker__year-nav">
+                  <button className="icon-btn" onClick={() => setPickerYear(y => y - 1)}>‹</button>
+                  <span className="month-picker__year">{pickerYear}</span>
+                  <button className="icon-btn" onClick={() => setPickerYear(y => y + 1)}>›</button>
+                </div>
+                <div className="month-picker__grid">
+                  {MONTHS.map((label, idx) => {
+                    const isActive =
+                      idx === current.getMonth() && pickerYear === current.getFullYear()
+                    return (
+                      <button
+                        key={label}
+                        className={clsx('month-picker__cell', { 'month-picker__cell--active': isActive })}
+                        onClick={() => {
+                          setCurrent(setYear(setMonth(current, idx), pickerYear))
+                          setShowPicker(false)
+                        }}
+                      >
+                        {label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
           <button className="icon-btn cal-nav-arrow" onClick={goForward}>›</button>
           <button
             className="btn btn--ghost btn--sm"

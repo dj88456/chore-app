@@ -378,7 +378,7 @@
   color: var(--text-heading);
   padding: 4px 8px; border-radius: var(--radius-sm);
   transition: background 0.12s;
-  min-width: 220px;
+  min-width: 180px;
 }
 .cal__month-btn:hover { background: var(--surface-2); }
 .cal__month-caret { font-size: 10px; color: var(--text-muted); }

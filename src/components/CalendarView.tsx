@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   startOfMonth, endOfMonth,
   startOfWeek, endOfWeek,
@@ -324,7 +325,7 @@ export function CalendarView({ onEditChore, onNewChore }: Props) {
             {navLabel()} <span className="cal__month-caret">{showPicker ? '▲' : '▼'}</span>
           </button>
 
-          {showPicker && (
+          {showPicker && createPortal(
             <div
               ref={pickerRef}
               className="month-picker"
@@ -382,7 +383,8 @@ export function CalendarView({ onEditChore, onNewChore }: Props) {
                   </div>
                 </>
               )}
-            </div>
+            </div>,
+            document.body
           )}
 
           <button className="icon-btn cal-nav-arrow" onClick={goForward}>›</button>

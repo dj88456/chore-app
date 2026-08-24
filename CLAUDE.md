@@ -1,7 +1,6 @@
 # chore-app
 
 Office chore management app — assign, track, and rotate cleaning/maintenance tasks among employees.
-
 ## Tech Stack
 
 | Layer | Choice |
@@ -12,7 +11,6 @@ Office chore management app — assign, track, and rotate cleaning/maintenance t
 | Dates | date-fns 4 |
 | Classnames | clsx + tailwind-merge |
 | Linting | ESLint 9 (typescript-eslint, react-hooks, react-refresh) |
-
 ## Key Directories
 
 ```
@@ -24,7 +22,6 @@ src/App.css        — component styles scoped to App layout
 src/assets/        — static images/icons bundled by Vite
 .claude/docs/      — supplemental documentation for Claude
 ```
-
 ## Build & Dev Commands
 
 ```bash
@@ -35,13 +32,11 @@ npm run lint       # ESLint across all .ts/.tsx files
 ```
 
 TypeScript config: [tsconfig.app.json](tsconfig.app.json) — strict mode, `noUnusedLocals`, `noUnusedParameters`, `erasableSyntaxOnly`, target ES2023.
-
 ## Entry Points
 
 - HTML shell: [index.html](index.html:11) — single `<div id="root">`, script at `src/main.tsx`
 - React root: [src/main.tsx](src/main.tsx:6) — `createRoot` with `StrictMode`
 - App component: [src/App.tsx](src/App.tsx)
-
 ## Additional Documentation
 
 Check these files when the task touches the relevant area:

@@ -1,0 +1,22 @@
+name: docs-budget
+on: [push, pull_request]
+jobs:
+  budget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 文档体积闸门
+        run: |
+          python3 - <<'PY'
+          import io,re,os,sys
+          LIM={'CLAUDE.md':(500,50),'CHANGES.md':(1000,100),'HANDOFF.md':(300,30)}
+          bad=[]
+          for f,(mt,ml) in LIM.items():
+              if not os.path.exists(f): continue
+              t=io.open(f,encoding='utf-8').read()
+              h=len(re.findall(r'[一-龥]',t)); tk=h+(len(t)-h)//4
+              ln=len(t.splitlines())
+              print(f'{f}: {tk} tok / {ln} L  (limit {mt}/{ml})')
+              if tk>mt or ln>ml: bad.append(f)
+          if bad: sys.exit('超预算: '+', '.join(bad)+' —— 精简或把细则移到 docs/')
+          PY

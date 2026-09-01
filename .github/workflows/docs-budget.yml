@@ -1,5 +1,9 @@
 name: docs-budget
-on: [push, pull_request]
+# 不写裸 push：分支每推一次就多跑一条，内容和 PR 那条一样。
+on:
+  pull_request:
+  push:
+    branches: [main]
 jobs:
   budget:
     runs-on: ubuntu-latest
